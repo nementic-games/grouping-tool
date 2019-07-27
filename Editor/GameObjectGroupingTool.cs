@@ -8,6 +8,7 @@
 
 #if UNITY_EDITOR
 using UnityEditor;
+using UnityEditor.ShortcutManagement;
 using UnityEngine;
 
 namespace Nementic.GroupingTool
@@ -21,28 +22,7 @@ namespace Nementic.GroupingTool
         public static GameObjectLabler.Type defaultIconType = GameObjectLabler.Type.Label;
         public static GameObjectLabler.Color defaultIconColor = GameObjectLabler.Color.Gray;
 
-        public static KeyCode ShortCut
-        {
-            get { return shortCut; }
-            set
-            {
-                shortCut = value;
-                shortCutDetector.shortCut = value;
-            }
-        }
-        private static KeyCode shortCut = KeyCode.None;
-
-        public static AdditionalKeyCode AdditionalShortCut
-        {
-            get { return additionalShortCut; }
-            set
-            {
-                additionalShortCut = value;
-                shortCutDetector.additionalShortCut = value;
-            }
-        }
-        private static AdditionalKeyCode additionalShortCut;
-        private static EditorShortCutDetector shortCutDetector;
+        private static GUICallbackHook callbackHook;
 
         /// <summary>
         /// Will be created by the editor. (InitializeOnLoad)
@@ -50,8 +30,18 @@ namespace Nementic.GroupingTool
         static GameObjectGroupingTool()
         {
             GameObjectGroupingToolMenuItem.Init();
-            shortCutDetector = new EditorShortCutDetector(RequestGroupSelection, shortCut, additionalShortCut);
-            shortCutDetector.Init();
+
+            callbackHook = new GUICallbackHook
+            {
+                actionToCall = RequestGroupSelection
+            };
+        }
+
+        [Shortcut("Nementic/Grouping Tool/Group", KeyCode.G, ShortcutModifiers.Action)]
+        private static void UnityShortcutManagerTriggered()
+        {
+            // The callback hook is needed because the naming popup can only be triggered in a GUI callback.
+            callbackHook.ExecuteInNextGUI();
         }
 
         /// <summary>

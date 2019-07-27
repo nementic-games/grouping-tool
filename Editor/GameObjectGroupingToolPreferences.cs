@@ -20,15 +20,24 @@ namespace Nementic.GroupingTool
         private static bool preferencesLoaded = false;
 
         // Keys for loading the preferences from the player prefs.
-        private static string shortCutKey = "Shortcut";
-        private static string additionalShortCutKey = "Additional Shortcut";
         private static string showPopUpString = "Show Popup";
 
         private static string useDefaultLableKey = "Use Default Label";
         private static string defaultLableTypeKey = "Default Label Type";
         private static string defaultLableColorKey = "Default Label Color";
 
-        [PreferenceItem("Nementic/Grouping Tool")]
+        [SettingsProvider]
+        public static SettingsProvider CreateSettingsProvider()
+        {
+            return new SettingsProvider("Nementic/Grouping Tool", SettingsScope.User)
+            {
+                guiHandler = (s) =>
+                {
+                    PreferencesGUI();
+                }
+            };
+        }
+
         public static void PreferencesGUI()
         {
             LoadPreferences();
@@ -38,12 +47,6 @@ namespace Nementic.GroupingTool
                 "Show Naming Popup",
                 GameObjectGroupingTool.showPopUp
                 );
-
-            EditorGUILayout.BeginHorizontal();
-            EditorGUILayout.PrefixLabel("Editor Shortcut");
-            GameObjectGroupingTool.AdditionalShortCut = (AdditionalKeyCode)EditorGUILayout.EnumPopup(GameObjectGroupingTool.AdditionalShortCut);
-            GameObjectGroupingTool.ShortCut = (KeyCode)EditorGUILayout.EnumPopup(GameObjectGroupingTool.ShortCut);
-            EditorGUILayout.EndHorizontal();
 
             EditorGUILayout.Space();
             GameObjectGroupingTool.useDefaultLable = EditorGUILayout.Toggle(
@@ -62,8 +65,6 @@ namespace Nementic.GroupingTool
             // Save new preferences.
             if (GUI.changed)
             {
-                EditorPrefs.SetInt(shortCutKey, (int)GameObjectGroupingTool.ShortCut);
-                EditorPrefs.SetInt(additionalShortCutKey, (int)GameObjectGroupingTool.AdditionalShortCut);
                 EditorPrefs.SetBool(showPopUpString, GameObjectGroupingTool.showPopUp);
                 EditorPrefs.SetBool(useDefaultLableKey, GameObjectGroupingTool.useDefaultLable);
                 EditorPrefs.SetInt(defaultLableTypeKey, (int)GameObjectGroupingTool.defaultIconType);
@@ -74,12 +75,8 @@ namespace Nementic.GroupingTool
         [InitializeOnLoadMethod]
         private static void LoadPreferences()
         {
-            // Load preferences
             if (preferencesLoaded == false)
             {
-                GameObjectGroupingTool.ShortCut = (KeyCode)EditorPrefs.GetInt(shortCutKey, (int)KeyCode.G);
-                GameObjectGroupingTool.AdditionalShortCut = (AdditionalKeyCode)EditorPrefs.GetInt(additionalShortCutKey, (int)AdditionalKeyCode.Control);
-
                 GameObjectGroupingTool.showPopUp = EditorPrefs.GetBool(showPopUpString, true);
 
                 GameObjectGroupingTool.useDefaultLable = EditorPrefs.GetBool(useDefaultLableKey, true);
