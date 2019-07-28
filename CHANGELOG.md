@@ -15,3 +15,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 - Upgrade from Unity 2018.3 to 2019.1
 - Replaced deprecated scene view GUI callback
 - Replaced deprecated preference item with new settings provider
+
+## [1.1.1] - 2019-07-28
+### Fixed
+- There was an issue in which GameObject groups were spawned in a different scene than the selected objects when having multiple scenes open. Now they stay in the scene of their child GameObjects.

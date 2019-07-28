@@ -10,6 +10,7 @@
 using UnityEditor;
 using UnityEditor.ShortcutManagement;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace Nementic.GroupingTool
 {
@@ -106,7 +107,16 @@ namespace Nementic.GroupingTool
         {
             GameObject parentObject = new GameObject(name);
             parentObject.transform.position = GetCenterPosition(futureChilds);
-            parentObject.transform.SetParent(CommonParentFinder.FindDeepest(futureChilds));
+            Transform newParent = CommonParentFinder.FindDeepest(futureChilds);
+
+            if (newParent != null)
+                parentObject.transform.SetParent(newParent);
+            else // if it's a root object make sure it spawned in the right scene.
+            {
+                Scene targetScene = futureChilds[0].scene;
+                if (parentObject.scene != targetScene)
+                    SceneManager.MoveGameObjectToScene(parentObject, targetScene);
+            }
 
             if (useDefaultLable)
             {
@@ -136,6 +146,6 @@ namespace Nementic.GroupingTool
                 bounds.Encapsulate(gameObjects[i].transform.position);
             return bounds.center;
         }
-    } 
+    }
 }
 #endif
