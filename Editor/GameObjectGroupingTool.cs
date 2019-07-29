@@ -107,16 +107,21 @@ namespace Nementic.GroupingTool
         {
             GameObject parentObject = new GameObject(name);
             parentObject.transform.position = GetCenterPosition(futureChilds);
-            Transform newParent = CommonParentFinder.FindDeepest(futureChilds);
+            Transform groupParent = CommonParentFinder.FindDeepest(futureChilds);
+            int groupSiblingIndex = CommonParentFinder.GetGroupSiblingIndex(futureChilds, groupParent);
 
-            if (newParent != null)
-                parentObject.transform.SetParent(newParent);
+            if (groupParent != null)
+            {
+                parentObject.transform.SetParent(groupParent);
+            }
             else // if it's a root object make sure it spawned in the right scene.
             {
                 Scene targetScene = futureChilds[0].scene;
                 if (parentObject.scene != targetScene)
                     SceneManager.MoveGameObjectToScene(parentObject, targetScene);
             }
+
+            parentObject.transform.SetSiblingIndex(groupSiblingIndex);
 
             if (useDefaultLable)
             {

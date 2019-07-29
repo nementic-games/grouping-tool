@@ -19,3 +19,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [1.1.1] - 2019-07-28
 ### Fixed
 - There was an issue in which GameObject groups were spawned in a different scene than the selected objects when having multiple scenes open. Now they stay in the scene of their child GameObjects.
+
+## [1.1.2] - 2019-07-29
+### Added
+- When grouping GameObjects the created group was created at the bottom of the hierarchy. Now the group is created close to the grouped GameObjects preferring the topmost.

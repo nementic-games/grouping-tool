@@ -66,6 +66,48 @@ namespace Nementic.GroupingTool
         }
 
         /// <summary>
+        /// Returns the sibling index in the hierarchy which the group parent should have. 
+        /// Beginning at the future children the hierarchy is searched upwards till the transforms
+        /// right below the group parent is found. The smallest sibling  index of these transforms is returned.
+        /// </summary>
+        public static int GetGroupSiblingIndex(GameObject[] futureChilds, Transform groupParent)
+        {
+            int smallestChildIndex = int.MaxValue;
+
+            for (int i = 0; i < futureChilds.Length; i++)
+            {
+                var currentChild = futureChilds[i];
+
+                // The parent of the current child is the group parent? Just take its sibling index.
+                if (currentChild.transform.parent == groupParent)
+                {
+                    int index = currentChild.transform.GetSiblingIndex();
+                    if (index < smallestChildIndex)
+                        smallestChildIndex = index;
+                }
+                else
+                {
+                    Transform nextParentTransform = currentChild.transform.parent;
+
+                    // Move up till the gameObject right below the group parent is found.
+                    while (nextParentTransform.parent != groupParent && nextParentTransform.parent != null)
+                    {
+                        nextParentTransform = nextParentTransform.parent;
+                    }
+
+                    // If the right transform is found, check it's sibling index.
+                    if (nextParentTransform.parent == groupParent)
+                    {
+                        int index = nextParentTransform.GetSiblingIndex();
+                        if (index < smallestChildIndex)
+                            smallestChildIndex = index;
+                    }
+                }
+            }
+            return smallestChildIndex;
+        }
+
+        /// <summary>
         /// Returns a list of the root transforms of the given gameObjects. 
         /// Each root transform will only be added once to the list. 
         /// </summary>

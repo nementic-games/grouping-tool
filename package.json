@@ -1,6 +1,6 @@
 {
   "name": "com.nementic.grouping-tool",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "displayName": "Grouping Tool",
   "description": "Use the right-click context menu or shortcut to group the selected GameObjects under a new parent.",
   "unity": "2019.1",

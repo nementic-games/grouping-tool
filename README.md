@@ -14,3 +14,17 @@ This tool has no dependencies other than the Unity editor itself and becomes ava
 ## Usage
 Select multiple GameObjects in the SceneView, right-click and select the context menu entry 'Group' or use the shortcut defined in Unity's shortcut manager (default is 'Control + G').
 A pop-up will open in which you can define the name of the new group. Click on the 'Group' button or hit enter to execute the grouping. The grouping will be cancelled if you click outside of the pop-up window.
+
+## Features
+- Group is centered between child GameObjects
+- Customisable shortcut
+- Naming pop-up for created groups
+- Automatic labeling of groups
+- Preferences to disable labels and naming pop-up
+- Works without hierarchy or scene view open
+- Complete undo
+- Supports GameObjects on different hierarchy levels
+- Supports GameObjects that are nested within each other
+- Supports deep hierarchies - tested in a 25 layer deep hierarchy
+- Supports multiple open scenes
+
