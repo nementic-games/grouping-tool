@@ -18,12 +18,13 @@ namespace Nementic.GroupingTool
     public class OptionsPopUp : PopupWindowContent
     {
         public readonly static float windowWidth = 250;
-        public readonly static float windowHeight = 90;
+        public readonly static float windowHeight = 110;
         private readonly static int windowPaddingInPixel = 10;
         private readonly static int rowPaddingInPixel = 5;
 
         private static string defaultGroupName = "New Group";
         private static string currentGroupName;
+        private static GroupPosition groupPosition;
 
         bool focused = false;
 
@@ -52,10 +53,18 @@ namespace Nementic.GroupingTool
             GUILayout.EndHorizontal();
             GUILayout.Space(rowPaddingInPixel);
 
+            // Draw position selection
+            GUILayout.BeginHorizontal();
+            GUILayout.Label("Group Position");
+            GUI.SetNextControlName("Group Position");
+            groupPosition = (GroupPosition)EditorGUILayout.EnumPopup(groupPosition);
+            GUILayout.EndHorizontal();
+            GUILayout.Space(rowPaddingInPixel);
+
             // Draw group button and auto group on return.
             if (GUILayout.Button("Group") || (Event.current.isKey && Event.current.keyCode == KeyCode.Return))
             {
-                GameObjectGroupingTool.GroupSelection(currentGroupName);
+                GameObjectGroupingTool.GroupSelection(groupPosition, currentGroupName);
                 editorWindow.Close();
             }
 
@@ -76,6 +85,7 @@ namespace Nementic.GroupingTool
         {
             focused = false;
             currentGroupName = defaultGroupName;
+            groupPosition = GameObjectGroupingTool.lastGroupPosition;
             base.OnOpen();
         }
     }

@@ -23,3 +23,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## [1.1.2] - 2019-07-29
 ### Added
 - When grouping GameObjects the created group was created at the bottom of the hierarchy. Now the group is created close to the grouped GameObjects preferring the topmost.
+
+## [1.1.3] - 2021-02-05
+### Added
+- Option for group placement. You can now choose between a centered and origin position.

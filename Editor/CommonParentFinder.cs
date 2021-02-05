@@ -7,6 +7,7 @@
 */
 
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Nementic.GroupingTool
@@ -18,41 +19,43 @@ namespace Nementic.GroupingTool
     public static class CommonParentFinder
     {
         /// <summary>
-        /// Findest the deepest common parent of the given gameObjects. 
-        /// -> the first parent that all gameObjects share.
+        /// Find the deepest common parent of the given GameObjects. 
+        /// -> the first parent that all GameObjects share.
         /// </summary>
         public static Transform FindDeepest(GameObject[] gameObjects)
         {
-            if (gameObjects.Length == 0)
+            if (gameObjects == null || gameObjects.Length == 0)
                 return null;
+
             if (gameObjects.Length == 1)
                 return gameObjects[0].transform.parent;
 
             List<Transform> roots = GetRoots(gameObjects);
-            // They can't have common parents if the root is different.
+
+            // There can't be a common parent if the given 
+            // GameObjects have no root/parent transforms.
             if (roots.Count != 1)
                 return null;
+
             else // Find the most deep common parent. (The first parent that the objects share.)
             {
+                Transform currentGameObject;
                 Transform currentParent = gameObjects[0].transform.parent;
-                Transform currentChild;
-                bool parentFound = true;
 
-                while (currentParent != null)
+				while (currentParent != null)
                 {
-                    // Check if all objects are childs of the current parent.
-                    parentFound = true;
-                    for (int i = 0; i < gameObjects.Length; i++)
+					// Check if all objects are children of the parent.
+					bool parentFound = true;
+					for (int i = 0; i < gameObjects.Length; i++)
                     {
-                        currentChild = gameObjects[i].transform;
-                        if (currentChild == currentParent || currentChild.IsChildOf(currentParent) == false)
+                        currentGameObject = gameObjects[i].transform;
+                        if (currentGameObject == currentParent || currentGameObject.IsChildOf(currentParent) == false)
                         {
                             parentFound = false;
                             break;
                         }
                     }
 
-                    // Did we find a common parent?
                     if (parentFound)
                         return currentParent;
 
@@ -60,8 +63,8 @@ namespace Nementic.GroupingTool
                 }
             }
 
-            // We should never reach this point, because we are sure, 
-            // that the gameObjects at least share there roots.
+            // This point should never be reached, 
+            // because the GameObjects share at least there root.
             return null;
         }
 
@@ -76,26 +79,25 @@ namespace Nementic.GroupingTool
 
             for (int i = 0; i < futureChilds.Length; i++)
             {
-                var currentChild = futureChilds[i];
+                var current = futureChilds[i];
 
                 // The parent of the current child is the group parent? Just take its sibling index.
-                if (currentChild.transform.parent == groupParent)
+                if (current.transform.parent == groupParent)
                 {
-                    int index = currentChild.transform.GetSiblingIndex();
+                    int index = current.transform.GetSiblingIndex();
                     if (index < smallestChildIndex)
                         smallestChildIndex = index;
                 }
                 else
                 {
-                    Transform nextParentTransform = currentChild.transform.parent;
-
                     // Move up till the gameObject right below the group parent is found.
+                    Transform nextParentTransform = current.transform.parent;
                     while (nextParentTransform.parent != groupParent && nextParentTransform.parent != null)
                     {
                         nextParentTransform = nextParentTransform.parent;
                     }
 
-                    // If the right transform is found, check it's sibling index.
+                    // If the correct transform is found, check it's sibling index.
                     if (nextParentTransform.parent == groupParent)
                     {
                         int index = nextParentTransform.GetSiblingIndex();
@@ -117,29 +119,10 @@ namespace Nementic.GroupingTool
             for (int i = 0; i < gameObjects.Length; i++)
             {
                 Transform root = gameObjects[i].transform.root;
-                if (roots.Contains(root) == false &&
-                    ContainsGameObject(gameObjects, root.gameObject) == false)
+                if (roots.Contains(root) == false && gameObjects.Contains(root.gameObject) == false)
                     roots.Add(root);
             }
             return roots;
-        }
-
-        /// <summary>
-        /// Returns wether the given gameObject is contained in the gameObject array.
-        /// </summary>
-        private static bool ContainsGameObject(GameObject[] gameObjects, GameObject gameObject)
-        {
-            bool contains = false;
-            for (int i = 0; i < gameObjects.Length; i++)
-            {
-                var current = gameObjects[i];
-                if (current == gameObject)
-                {
-                    contains = true;
-                    break;
-                }
-            }
-            return contains;
         }
     }
 }
